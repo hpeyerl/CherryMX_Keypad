@@ -17,7 +17,7 @@
  */
 
 // You need to include this in some versions of the IDE
-//#include <Keyboard.h>
+#include <HID-Project.h>
 
 // Define I/O connections on board
 #define SW1 9
@@ -35,7 +35,6 @@ void setup()
   pinMode(SW2, INPUT_PULLUP);
   pinMode(SW3, INPUT_PULLUP);
   pinMode(SW4, INPUT_PULLUP);
-  pinMode(BACKLIGHT, OUTPUT);
   
   Keyboard.begin();
 }
@@ -50,12 +49,8 @@ void loop()
     // Check again (debouncing). If still pressed, send key
     if (digitalRead(SW1) == LOW)
     {
-      // Backlight to full brightness during press
-      analogWrite(BACKLIGHT,200);
-      backlightCounter = 201;
-
       // Send key
-      Keyboard.print('w');
+      Keyboard.write(MEDIA_PAUSE);
 
       // Sit here while key is still pressed, sending charatcer only once
       while(digitalRead(SW1) == LOW) { }
@@ -69,9 +64,7 @@ void loop()
     delay(5);
     if (digitalRead(SW2) == LOW)
     {
-      analogWrite(BACKLIGHT,200);
-      backlightCounter = 201;
-      Keyboard.print('a');
+      Keyboard.write(MEDIA_VOLUME_DOWN);
       while(digitalRead(SW2) == LOW) { }
     }
   }
@@ -82,9 +75,7 @@ void loop()
     delay(5);
     if (digitalRead(SW3) == LOW)
     {
-      analogWrite(BACKLIGHT,200);
-      backlightCounter = 201;
-      Keyboard.print('s');
+      Keyboard.write(MEDIA_VOLUME_UP);
       while(digitalRead(SW3) == LOW) { }
     }
   }
@@ -95,21 +86,8 @@ void loop()
     delay(5);
     if (digitalRead(SW4) == LOW)
     {
-      analogWrite(BACKLIGHT,200);
-      backlightCounter = 0;
-      Keyboard.print('d');
+      Keyboard.write(MEDIA_NEXT);
       while(digitalRead(SW4) == LOW) { }
     }
-  }
-
-  // If no keys were pressed, update the backlight
-  else {
-    backlightCounter++;
-
-    // This if/else creates a pulsing effect instead of ramp from min to max
-    if (backlightCounter < 32768)
-      analogWrite(BACKLIGHT,map(backlightCounter,0,32767,0,175));
-    else
-      analogWrite(BACKLIGHT,map(backlightCounter,32768,65535,175,0));
   }
 }
